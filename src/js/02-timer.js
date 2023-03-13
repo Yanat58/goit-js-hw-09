@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const ref = {
+const refs = {
   startBtn: document.querySelector('button[data-start]'),
   input: document.querySelector('#datetime-picker'),
   days: document.querySelector('span[data-days]'),
@@ -19,12 +19,12 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    ref.startBtn.disabled = true;
+    refs.startBtn.disabled = true;
     if (selectedDates[0].getTime() < Date.now()) {
       Notify.failure('Please choose a date in the future');
     } else {
       Notify.success('Please click on start!');
-      ref.startBtn.disabled = false;
+      refs.startBtn.disabled = false;
       selectedCountDown = selectedDates[0];
     }
   },
@@ -34,31 +34,25 @@ flatpickr('#datetime-picker', options);
 class CountDown {
   constructor() {
     this.intervalId = null;
-    this.isActive = false;
-    ref.startBtn.disabled = true;
+    refs.startBtn.disabled = true;
   }
   startCountDown() {
-    if (this.isActive) {
-      return;
-    }
-    this.isActive = true;
     this.intervalId = setInterval(() => {
       const deltaTime = selectedCountDown.getTime() - Date.now();
       const componentsCountDown = convertMs(deltaTime);
       this.updateComponentsCountDown(componentsCountDown);
-      console.log(deltaTime);
+
       if (deltaTime < 999) {
-        console.log(deltaTime);
         this.stopCountDown();
       }
     }, 1000);
   }
 
   updateComponentsCountDown({ days, hours, minutes, seconds }) {
-    ref.days.textContent = days;
-    ref.hours.textContent = hours;
-    ref.minutes.textContent = minutes;
-    ref.seconds.textContent = seconds;
+    refs.days.textContent = days;
+    refs.hours.textContent = hours;
+    refs.minutes.textContent = minutes;
+    refs.seconds.textContent = seconds;
   }
 
   stopCountDown() {
@@ -92,6 +86,8 @@ function addLeadingZero(value) {
   return String(value).padStart(2, 0);
 }
 
-ref.startBtn.addEventListener('click', () => {
+refs.startBtn.addEventListener('click', () => {
+  refs.startBtn.disabled = true;
+  refs.input.disabled = true;
   countDown.startCountDown();
 });
